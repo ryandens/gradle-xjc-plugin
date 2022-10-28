@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm")
     `java-gradle-plugin`
     `maven-publish`
-    id("org.unbroken-dome.test-sets") version "3.0.1"
+    id("org.unbroken-dome.test-sets") version "4.0.0"
     id("com.gradle.plugin-publish") version "0.12.0"
     id("org.asciidoctor.convert") version "1.5.9.2"
     id("org.jetbrains.dokka") version "0.10.1"
