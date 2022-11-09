@@ -1,6 +1,7 @@
 package org.unbrokendome.gradle.plugins.xjc.testutil.assertions
 
 import assertk.Assert
+import assertk.assertions.contains
 import assertk.assertions.isEqualTo
 import assertk.assertions.isIn
 import assertk.assertions.support.expected
@@ -16,6 +17,11 @@ fun Assert<BuildResult>.task(taskPath: String) =
             ?: expected("to include task '$taskPath', but was: ${show(actual.tasks.map { it.path })}")
     }
 
+
+fun Assert<BuildResult>.output() =
+        transform(name = "output") { actual ->
+            actual.output
+        }
 
 val Assert<BuildTask>.outcome: Assert<TaskOutcome>
     get() = transform(name = "$name outcome") { actual ->
