@@ -26,33 +26,6 @@ abstract class XjcSourceSetConvention
     layout: ProjectLayout
 ) {
 
-
-    /**
-     * The XJC binding customizations source.
-     *
-     * @see XjcGenerate.bindingFiles
-     */
-    val xjcBinding: SourceDirectorySet
-
-
-    /**
-     * Configures the XJC binding customizations source for this set.
-     *
-     * @see XjcGenerate.bindingFiles
-     */
-    fun xjcBinding(configureAction: Action<SourceDirectorySet>) =
-        xjcBinding.apply(configureAction::execute)
-
-
-    /**
-     * Configures the XJC binding customizations source for this set.
-     *
-     * @see XjcGenerate.bindingFiles
-     */
-    fun xjcBinding(@DelegatesTo(SourceDirectorySet::class, strategy = Closure.DELEGATE_FIRST) configureClosure: Closure<*>): SourceDirectorySet =
-        ConfigureUtil.configure(configureClosure, xjcBinding)
-
-
     /**
      * The XJC URL source for this set.
      *
@@ -183,10 +156,6 @@ abstract class XjcSourceSetConvention
         val sourceSetName = sourceSet.name
         val displayName = GUtil.toWords(sourceSetName)
 
-        xjcBinding = objects.sourceDirectorySet("xjcBinding", "$displayName XJC binding").apply {
-            include("**/*.xjb")
-        }
-
         xjcUrl = objects.sourceDirectorySet("xjcUrl", "$displayName XJC schema URLs").apply {
             include("**/*.url")
         }
@@ -195,12 +164,11 @@ abstract class XjcSourceSetConvention
             include("**/*.cat")
         }
 
-        listOf(xjcBinding, xjcUrl, xjcCatalog).forEach { sourceDirSet ->
+        listOf(xjcUrl, xjcCatalog).forEach { sourceDirSet ->
             sourceDirSet.srcDir(layout.projectDirectory.dir("src/$sourceSetName").dir(xjcSrcDirName))
         }
 
         with(sourceSet.allSource) {
-            source(xjcBinding)
             source(xjcUrl)
             source(xjcCatalog)
         }

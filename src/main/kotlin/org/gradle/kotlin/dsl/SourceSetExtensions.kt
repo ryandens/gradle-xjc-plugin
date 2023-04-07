@@ -14,23 +14,6 @@ import org.unbrokendome.gradle.plugins.xjc.XjcSourceSetConvention
 private val SourceSet.xjcConvention: XjcSourceSetConvention
     get() = (this as HasConvention).convention.getPlugin(XjcSourceSetConvention::class.java)
 
-/**
- * The XJC binding customizations source.
- *
- * @see XjcSourceSetConvention.xjcBinding
- */
-val SourceSet.xjcBinding: SourceDirectorySet
-    get() = xjcConvention.xjcBinding
-
-
-/**
- * Configures the XJC binding customizations source for this set.
- *
- * @see XjcSourceSetConvention.xjcBinding
- */
-fun SourceSet.xjcBinding(configureAction: SourceDirectorySet.() -> Unit) =
-    xjcBinding.apply(configureAction)
-
 
 /**
  * The XJC URL source for this set.
