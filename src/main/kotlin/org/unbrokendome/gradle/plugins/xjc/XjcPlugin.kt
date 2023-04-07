@@ -81,30 +81,44 @@ class XjcPlugin : Plugin<Project> {
             sourceSets.all { sourceSet ->
 
                 val xjcSourceSetConvention = project.objects.newInstance(
-                    XjcSourceSetConvention::class.java, sourceSet, xjcExtension.srcDirName
+                    XjcSourceSetConvention::class.java, sourceSet
                 )
 
 
                 val xjcSourceSetExtension = sourceSet.extensions.create(XJC_EXTENSION_NAME, XjcSourceSetExtension::class.java, project.objects)
-                val xjcSchema = project.objects.sourceDirectorySet("xjcSchema", "${GUtil.toWords(sourceSet.name)} XJC schema").apply {
+                val displayName = GUtil.toWords(sourceSet.name)
+                val xjcSchema = project.objects.sourceDirectorySet("xjcSchema", "$displayName XJC schema").apply {
                     include("**/*.xsd")
                 }
 
-                val xjcBinding = project.objects.sourceDirectorySet("xjcBinding", "${GUtil.toWords(sourceSet.name)} XJC binding").apply {
+                val xjcBinding = project.objects.sourceDirectorySet("xjcBinding", "$displayName XJC binding").apply {
                     include("**/*.xjb")
                 }
 
-                listOf(xjcSchema, xjcBinding).forEach { sourceDirSet ->
+                val xjcUrl = project.objects.sourceDirectorySet("xjcUrl", "$displayName XJC schema URLs").apply {
+                    include("**/*.url")
+                }
+
+                val xjcCatalog = project.objects.sourceDirectorySet("xjcCatalog", "$displayName XJC catalogs").apply {
+                    include("**/*.cat")
+                }
+
+
+                listOf(xjcSchema, xjcBinding, xjcUrl, xjcCatalog).forEach { sourceDirSet ->
                     sourceDirSet.srcDir(project.layout.projectDirectory.dir("src/${sourceSet.name}").dir(xjcExtension.srcDirName))
 
                 }
                 with(sourceSet.allSource) {
                     source(xjcSchema)
                     source(xjcBinding)
+                    source(xjcUrl)
+                    source(xjcCatalog)
                 }
 
                 xjcSourceSetExtension.xjcSchema.set(xjcSchema)
                 xjcSourceSetExtension.xjcBinding.set(xjcBinding)
+                xjcSourceSetExtension.xjcUrl.set(xjcUrl)
+                xjcSourceSetExtension.xjcCatalog.set(xjcCatalog)
 
 
 
@@ -135,8 +149,8 @@ class XjcPlugin : Plugin<Project> {
                 ) { task ->
                     task.source.setFrom(xjcSourceSetExtension.xjcSchema)
                     task.bindingFiles.setFrom(xjcSourceSetExtension.xjcBinding)
-                    task.urlSources.setFrom(xjcSourceSetConvention.xjcUrl)
-                    task.catalogs.setFrom(xjcSourceSetConvention.xjcCatalog)
+                    task.urlSources.setFrom(xjcSourceSetExtension.xjcUrl)
+                    task.catalogs.setFrom(xjcSourceSetExtension.xjcCatalog)
 
                     task.pluginClasspath.setFrom(xjcClasspathConfiguration)
 

@@ -9,4 +9,8 @@ abstract class XjcSourceSetExtension(objectFactory: ObjectFactory) {
     val xjcSchema: Property<SourceDirectorySet> = objectFactory.property(SourceDirectorySet::class.java)
 
     val xjcBinding: Property<SourceDirectorySet> = objectFactory.property(SourceDirectorySet::class.java)
+
+    val xjcUrl: Property<SourceDirectorySet> = objectFactory.property(SourceDirectorySet::class.java)
+
+    val xjcCatalog: Property<SourceDirectorySet> = objectFactory.property(SourceDirectorySet::class.java)
 }

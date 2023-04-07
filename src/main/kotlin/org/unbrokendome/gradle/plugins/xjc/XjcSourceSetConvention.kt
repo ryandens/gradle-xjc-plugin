@@ -21,61 +21,7 @@ import javax.inject.Inject
 abstract class XjcSourceSetConvention
 @Inject internal constructor(
     private val sourceSet: SourceSet,
-    private val xjcSrcDirName: Provider<String>,
-    objects: ObjectFactory,
-    layout: ProjectLayout
 ) {
-
-    /**
-     * The XJC URL source for this set.
-     *
-     * @see XjcGenerate.urlSources
-     */
-    val xjcUrl: SourceDirectorySet
-
-
-    /**
-     * Configures the XJC URL source for this set.
-     *
-     * @see XjcGenerate.urlSources
-     */
-    fun xjcUrl(configureAction: Action<SourceDirectorySet>) =
-        xjcUrl.apply(configureAction::execute)
-
-
-    /**
-     * Configures the XJC URL source for this set.
-     *
-     * @see XjcGenerate.urlSources
-     */
-    fun xjcUrl(@DelegatesTo(SourceDirectorySet::class, strategy = Closure.DELEGATE_FIRST) configureClosure: Closure<*>): SourceDirectorySet =
-        ConfigureUtil.configure(configureClosure, xjcUrl)
-
-
-    /**
-     * The XJC catalog source for this set.
-     *
-     * @see XjcGenerate.catalogs
-     */
-    val xjcCatalog: SourceDirectorySet
-
-
-    /**
-     * Configures the XJC catalog source for this set.
-     *
-     * @see XjcGenerate.catalogs
-     */
-    fun xjcCatalog(configureAction: Action<SourceDirectorySet>) =
-        xjcUrl.apply(configureAction::execute)
-
-
-    /**
-     * Configures the XJC catalog source for this set.
-     *
-     * @see XjcGenerate.catalogs
-     */
-    fun xjcCatalog(@DelegatesTo(SourceDirectorySet::class, strategy = Closure.DELEGATE_FIRST) configureClosure: Closure<*>): SourceDirectorySet =
-        ConfigureUtil.configure(configureClosure, xjcUrl)
 
 
     /**
@@ -153,25 +99,6 @@ abstract class XjcSourceSetConvention
 
 
     init {
-        val sourceSetName = sourceSet.name
-        val displayName = GUtil.toWords(sourceSetName)
-
-        xjcUrl = objects.sourceDirectorySet("xjcUrl", "$displayName XJC schema URLs").apply {
-            include("**/*.url")
-        }
-
-        xjcCatalog = objects.sourceDirectorySet("xjcCatalog", "$displayName XJC catalogs").apply {
-            include("**/*.cat")
-        }
-
-        listOf(xjcUrl, xjcCatalog).forEach { sourceDirSet ->
-            sourceDirSet.srcDir(layout.projectDirectory.dir("src/$sourceSetName").dir(xjcSrcDirName))
-        }
-
-        with(sourceSet.allSource) {
-            source(xjcUrl)
-            source(xjcCatalog)
-        }
 
         @Suppress("LeakingThis")
         xjcGenerateEpisode.convention(false)

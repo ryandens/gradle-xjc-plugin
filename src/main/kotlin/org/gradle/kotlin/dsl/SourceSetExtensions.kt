@@ -2,7 +2,6 @@
 
 package org.gradle.kotlin.dsl
 
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -13,42 +12,6 @@ import org.unbrokendome.gradle.plugins.xjc.XjcSourceSetConvention
 
 private val SourceSet.xjcConvention: XjcSourceSetConvention
     get() = (this as HasConvention).convention.getPlugin(XjcSourceSetConvention::class.java)
-
-
-/**
- * The XJC URL source for this set.
- *
- * @see XjcSourceSetConvention.xjcUrl
- */
-val SourceSet.xjcUrl: SourceDirectorySet
-    get() = xjcConvention.xjcUrl
-
-
-/**
- * Configures the XJC URL source for this set.
- *
- * @see XjcSourceSetConvention.xjcUrl
- */
-fun SourceSet.xjcUrl(configureAction: SourceDirectorySet.() -> Unit) =
-    xjcUrl.apply(configureAction)
-
-
-/**
- * The XJC catalog source for this set.
- *
- * @see XjcSourceSetConvention.xjcCatalog
- */
-val SourceSet.xjcCatalog: SourceDirectorySet
-    get() = xjcConvention.xjcCatalog
-
-
-/**
- * Configures the XJC catalog source for this set.
- *
- * @see XjcSourceSetConvention.xjcCatalog
- */
-fun SourceSet.xjcCatalog(configureAction: SourceDirectorySet.() -> Unit) =
-    xjcCatalog.apply(configureAction)
 
 
 /**
