@@ -15,24 +15,6 @@ private val SourceSet.xjcConvention: XjcSourceSetConvention
     get() = (this as HasConvention).convention.getPlugin(XjcSourceSetConvention::class.java)
 
 /**
- * The XJC schema source.
- *
- * @see [XjcSourceSetConvention.xjcSchema]
- */
-val SourceSet.xjcSchema: SourceDirectorySet
-    get() = xjcConvention.xjcSchema
-
-
-/**
- * Configures the XJC schema source for this set.
- *
- * @see [XjcSourceSetConvention.xjcSchema]
- */
-fun SourceSet.xjcSchema(configureAction: SourceDirectorySet.() -> Unit) =
-    xjcSchema.apply(configureAction)
-
-
-/**
  * The XJC binding customizations source.
  *
  * @see XjcSourceSetConvention.xjcBinding
