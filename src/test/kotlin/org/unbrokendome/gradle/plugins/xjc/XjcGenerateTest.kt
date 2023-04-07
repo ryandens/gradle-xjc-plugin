@@ -170,12 +170,12 @@ object XjcGenerateTest : Spek({
 
         it("should set task properties from source set") {
             val mainSourceSet = project.sourceSets.getByName("main")
-            val xjcSourceSetConvention =
-                (mainSourceSet as HasConvention).requiredConvention<XjcSourceSetConvention>()
+            val xjcSourceSetExtension =
+                mainSourceSet.requiredExtension<XjcSourceSetExtension>()
             val task = project.tasks.getByName("xjcGenerate") as XjcGenerate
 
-            xjcSourceSetConvention.xjcTargetPackage.set("com.example")
-            xjcSourceSetConvention.xjcGenerateEpisode.set(true)
+            xjcSourceSetExtension.xjcTargetPackage.set("com.example")
+            xjcSourceSetExtension.xjcGenerateEpisode.set(true)
 
             assertThat(task, name = "task").all {
                 prop(XjcGenerate::targetPackage)
@@ -193,9 +193,9 @@ object XjcGenerateTest : Spek({
             }
 
             val mainSourceSet = project.sourceSets.getByName("main")
-            val xjcSourceSetConvention =
-                (mainSourceSet as HasConvention).requiredConvention<XjcSourceSetConvention>()
-            xjcSourceSetConvention.xjcExtraArgs.add("-extra2")
+            val xjcSourceSetExtension =
+                mainSourceSet.requiredExtension<XjcSourceSetExtension>()
+            xjcSourceSetExtension.xjcExtraArgs.add("-extra2")
 
             val task = project.tasks.getByName("xjcGenerate") as XjcGenerate
             task.extraArgs.add("-extra3")

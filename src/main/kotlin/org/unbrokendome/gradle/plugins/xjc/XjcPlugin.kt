@@ -158,9 +158,9 @@ class XjcPlugin : Plugin<Project> {
 
                     task.episodes.setFrom(episodesConfiguration)
 
-                    task.targetPackage.set(xjcSourceSetConvention.xjcTargetPackage)
-                    task.generateEpisode.set(xjcSourceSetConvention.xjcGenerateEpisode)
-                    task.extraArgs.addAll(xjcSourceSetConvention.xjcExtraArgs)
+                    task.targetPackage.set(xjcSourceSetExtension.xjcTargetPackage)
+                    task.generateEpisode.set(xjcSourceSetExtension.xjcGenerateEpisode)
+                    task.extraArgs.addAll(xjcSourceSetExtension.xjcExtraArgs)
 
                     task.outputDirectory.set(
                         project.layout.buildDirectory.dir("generated/sources/xjc/java/${sourceSet.name}")

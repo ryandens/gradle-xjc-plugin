@@ -25,42 +25,6 @@ abstract class XjcSourceSetConvention
 
 
     /**
-     * The target package for XJC.
-     *
-     * When you specify a target package with this command-line option, it overrides any binding customization for the
-     * package name and the default package name algorithm defined in the specification.
-     *
-     * Corresponds to the `-p` command line option.
-     *
-     * @see XjcGenerate.targetPackage
-     */
-    abstract val xjcTargetPackage: Property<String>
-
-
-    /**
-     * If `true`, instructs XJC to generate an episode file at `META-INF/sun-jaxb.episode`.
-     * The generated episode file will then be included in the [resources][SourceSet.resources] of this source set.
-     *
-     * The default is `false`.
-     *
-     * @see XjcGenerate.generateEpisode
-     */
-    abstract val xjcGenerateEpisode: Property<Boolean>
-
-
-    /**
-     * Additional arguments to be passed to XJC for this source set.
-     *
-     * These extra arguments will be added after any extra arguments specified via [XjcExtension.extraArgs]
-     * in the global `xjc` block.
-     *
-     * @see XjcExtension.extraArgs
-     * @see XjcGenerate.extraArgs
-     */
-    abstract val xjcExtraArgs: ListProperty<String>
-
-
-    /**
      * The name of the [XjcGenerate] task that will perform the XJC generation for this source set.
      */
     val xjcGenerateTaskName: String
@@ -96,11 +60,4 @@ abstract class XjcSourceSetConvention
 
     private fun sourceSetSpecificConfigurationName(name: String) =
         if (sourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME) name else "${sourceSet.name}${name.capitalize()}"
-
-
-    init {
-
-        @Suppress("LeakingThis")
-        xjcGenerateEpisode.convention(false)
-    }
 }
