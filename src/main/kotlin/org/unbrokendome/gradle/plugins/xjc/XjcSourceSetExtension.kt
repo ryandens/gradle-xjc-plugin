@@ -7,4 +7,6 @@ import org.gradle.api.provider.Property
 abstract class XjcSourceSetExtension(objectFactory: ObjectFactory) {
 
     val xjcSchema: Property<SourceDirectorySet> = objectFactory.property(SourceDirectorySet::class.java)
+
+    val xjcBinding: Property<SourceDirectorySet> = objectFactory.property(SourceDirectorySet::class.java)
 }

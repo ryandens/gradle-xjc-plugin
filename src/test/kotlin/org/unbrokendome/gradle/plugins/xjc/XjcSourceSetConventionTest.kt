@@ -88,11 +88,11 @@ object XjcSourceSetConventionTest : Spek({
                 prop("xjcSchema") { it.xjcSchema.get() }
                         .prop("includes") { it.includes }
                         .containsOnly("**/*.xsd")
+                prop("xjcBinding") { it.xjcBinding.get() }
+                        .prop("includes") { it.includes }
+                        .containsOnly("**/*.xjb")
             }
             assertThat(xjcSourceSetConvention).all {
-                prop("xjcBinding") { it.xjcBinding }
-                    .prop("includes") { it.includes }
-                    .containsOnly("**/*.xjb")
                 prop("xjcUrl") { it.xjcUrl }
                     .prop("includes") { it.includes }
                     .containsOnly("**/*.url")
@@ -108,12 +108,12 @@ object XjcSourceSetConventionTest : Spek({
                 prop("xjcSchema") { it.xjcSchema.get() }
                         .prop("srcDirs") { it.srcDirs }
                         .containsOnly(project.file("src/custom/xjc"))
+                prop("xjcBinding") { it.xjcBinding.get() }
+                        .prop("srcDirs") { it.srcDirs }
+                        .containsOnly(project.file("src/custom/xjc"))
             }
 
             assertThat(xjcSourceSetConvention).all {
-                prop("xjcBinding") { it.xjcBinding }
-                    .prop("srcDirs") { it.srcDirs }
-                    .containsOnly(project.file("src/custom/xjc"))
                 prop("xjcUrl") { it.xjcUrl }
                     .prop("srcDirs") { it.srcDirs }
                     .containsOnly(project.file("src/custom/xjc"))
