@@ -6,6 +6,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.util.GUtil
 import org.gradle.util.GradleVersion
@@ -119,6 +120,11 @@ class XjcPlugin : Plugin<Project> {
                 xjcSourceSetExtension.xjcBinding.set(xjcBinding)
                 xjcSourceSetExtension.xjcUrl.set(xjcUrl)
                 xjcSourceSetExtension.xjcCatalog.set(xjcCatalog)
+                xjcSourceSetExtension.xjcGenerateTaskName.set("xjcGenerate" +
+                        if (sourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME) "" else sourceSet.name.capitalize())
+                xjcSourceSetExtension.xjcClasspathConfigurationName.set(sourceSetSpecificConfigurationName("xjcClasspath", sourceSet))
+                xjcSourceSetExtension.xjcEpisodesConfigurationName.set(sourceSetSpecificConfigurationName("xjcEpisodes", sourceSet))
+                xjcSourceSetExtension.xjcCatalogResolutionConfigurationName.set(sourceSetSpecificConfigurationName("xjcCatalogResolution", sourceSet))
 
 
 
@@ -126,13 +132,13 @@ class XjcPlugin : Plugin<Project> {
                 (sourceSet as HasConvention).convention.plugins[XJC_EXTENSION_NAME] = xjcSourceSetConvention
 
                 val xjcClasspathConfiguration = project.createInternalConfiguration(
-                    xjcSourceSetConvention.xjcClasspathConfigurationName
+                        xjcSourceSetExtension.xjcClasspathConfigurationName.get()
                 ) {
                     extendsFrom(globalXjcClasspathConfiguration)
                 }
 
                 val catalogResolutionConfiguration = project.createInternalConfiguration(
-                    xjcSourceSetConvention.xjcCatalogResolutionConfigurationName
+                        xjcSourceSetExtension.xjcCatalogResolutionConfigurationName.get()
                 ) {
                     extendsFrom(
                         globalCatalogResolutionConfiguration,
@@ -141,11 +147,11 @@ class XjcPlugin : Plugin<Project> {
                 }
 
                 val episodesConfiguration = project.createInternalConfiguration(
-                    xjcSourceSetConvention.xjcEpisodesConfigurationName
+                        xjcSourceSetExtension.xjcEpisodesConfigurationName.get()
                 )
 
                 val generateTask = project.tasks.register(
-                    xjcSourceSetConvention.xjcGenerateTaskName, XjcGenerate::class.java
+                        xjcSourceSetExtension.xjcGenerateTaskName.get(), XjcGenerate::class.java
                 ) { task ->
                     task.source.setFrom(xjcSourceSetExtension.xjcSchema)
                     task.bindingFiles.setFrom(xjcSourceSetExtension.xjcBinding)
@@ -187,6 +193,9 @@ class XjcPlugin : Plugin<Project> {
             }
         }
     }
+
+    private fun sourceSetSpecificConfigurationName(name: String, sourceSet: SourceSet) =
+            if (sourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME) name else "${sourceSet.name}${name.capitalize()}"
 
 
     private fun Project.defaultXjcDependencies(xjcVersion: String): List<Dependency> =

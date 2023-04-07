@@ -51,6 +51,14 @@ abstract class XjcSourceSetExtension(objectFactory: ObjectFactory) {
      */
     val xjcExtraArgs: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
+    val xjcGenerateTaskName: Property<String> = objectFactory.property(String::class.java)
+
+    val xjcClasspathConfigurationName: Property<String> = objectFactory.property(String::class.java)
+
+    val xjcEpisodesConfigurationName: Property<String> = objectFactory.property(String::class.java)
+
+    val xjcCatalogResolutionConfigurationName: Property<String> = objectFactory.property(String::class.java)
+
 
     init {
         xjcGenerateEpisode.convention(false)

@@ -6,7 +6,6 @@ import assertk.assertions.containsAll
 import assertk.assertions.containsOnly
 import assertk.assertions.isEqualTo
 import assertk.assertions.prop
-import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSet
 import org.spekframework.spek2.Spek
@@ -14,7 +13,6 @@ import org.spekframework.spek2.style.specification.describe
 import org.unbrokendome.gradle.plugins.xjc.spek.applyPlugin
 import org.unbrokendome.gradle.plugins.xjc.spek.setupGradleProject
 import org.unbrokendome.gradle.plugins.xjc.testlib.directory
-import org.unbrokendome.gradle.plugins.xjc.testutil.requiredConvention
 import org.unbrokendome.gradle.plugins.xjc.testutil.requiredExtension
 import org.unbrokendome.gradle.plugins.xjc.testutil.sourceSets
 
@@ -33,20 +31,20 @@ object XjcSourceSetConventionTest : Spek({
             project.sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME)
         }
 
-        val xjcSourceSetConvention by memoized {
-            (mainSourceSet as HasConvention).requiredConvention<XjcSourceSetConvention>()
+        val xjcSourceSetExtension by memoized {
+            mainSourceSet.requiredExtension<XjcSourceSetExtension>()
         }
 
 
         it("should return the correct task and configuration names") {
-            assertThat(xjcSourceSetConvention).all {
-                prop(XjcSourceSetConvention::xjcGenerateTaskName)
+            assertThat(xjcSourceSetExtension).all {
+                prop(XjcSourceSetExtension::xjcGenerateTaskName)
                     .isEqualTo("xjcGenerate")
-                prop(XjcSourceSetConvention::xjcClasspathConfigurationName)
+                prop(XjcSourceSetExtension::xjcClasspathConfigurationName)
                     .isEqualTo("xjcClasspath")
-                prop(XjcSourceSetConvention::xjcEpisodesConfigurationName)
+                prop(XjcSourceSetExtension::xjcEpisodesConfigurationName)
                     .isEqualTo("xjcEpisodes")
-                prop(XjcSourceSetConvention::xjcCatalogResolutionConfigurationName)
+                prop(XjcSourceSetExtension::xjcCatalogResolutionConfigurationName)
                     .isEqualTo("xjcCatalogResolution")
             }
         }
@@ -59,24 +57,20 @@ object XjcSourceSetConventionTest : Spek({
             project.sourceSets.create("custom")
         }
 
-        val xjcSourceSetConvention by memoized {
-            (sourceSet as HasConvention).requiredConvention<XjcSourceSetConvention>()
-        }
-
         val xjcSourceSetExtension by memoized {
             sourceSet.requiredExtension<XjcSourceSetExtension>()
         }
 
 
         it("should return the correct task and configuration names") {
-            assertThat(xjcSourceSetConvention).all {
-                prop(XjcSourceSetConvention::xjcGenerateTaskName)
+            assertThat(xjcSourceSetExtension).all {
+                prop(XjcSourceSetExtension::xjcGenerateTaskName)
                     .isEqualTo("xjcGenerateCustom")
-                prop(XjcSourceSetConvention::xjcClasspathConfigurationName)
+                prop(XjcSourceSetExtension::xjcClasspathConfigurationName)
                     .isEqualTo("customXjcClasspath")
-                prop(XjcSourceSetConvention::xjcEpisodesConfigurationName)
+                prop(XjcSourceSetExtension::xjcEpisodesConfigurationName)
                     .isEqualTo("customXjcEpisodes")
-                prop(XjcSourceSetConvention::xjcCatalogResolutionConfigurationName)
+                prop(XjcSourceSetExtension::xjcCatalogResolutionConfigurationName)
                     .isEqualTo("customXjcCatalogResolution")
             }
         }

@@ -24,40 +24,6 @@ abstract class XjcSourceSetConvention
 ) {
 
 
-    /**
-     * The name of the [XjcGenerate] task that will perform the XJC generation for this source set.
-     */
-    val xjcGenerateTaskName: String
-        get() = "xjcGenerate" +
-                if (sourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME) "" else sourceSet.name.capitalize()
 
 
-    /**
-     * The name of the XJC classpath configuration for this source set. This configuration should be used for
-     * adding plugins to the XJC generation step.
-     *
-     * Any dependencies added to the XJC classpath configuration will be passed to XJC using the `-classpath`
-     * CLI option.
-     */
-    val xjcClasspathConfigurationName: String
-        get() = sourceSetSpecificConfigurationName("xjcClasspath")
-
-
-    /**
-     * The name of the XJC episodes configuration for this source set.
-     */
-    val xjcEpisodesConfigurationName: String
-        get() = sourceSetSpecificConfigurationName("xjcEpisodes")
-
-
-    /**
-     * The name of the catalog resolution configuration for this source set. This configuration should be used for
-     * artifacts containing other schemas that need to be resolved from a catalog.
-     */
-    val xjcCatalogResolutionConfigurationName: String
-        get() = sourceSetSpecificConfigurationName("xjcCatalogResolution")
-
-
-    private fun sourceSetSpecificConfigurationName(name: String) =
-        if (sourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME) name else "${sourceSet.name}${name.capitalize()}"
 }
