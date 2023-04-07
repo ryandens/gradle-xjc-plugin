@@ -4,16 +4,14 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.util.GUtil
 import org.gradle.util.GradleVersion
 import org.unbrokendome.gradle.plugins.xjc.internal.GRADLE_VERSION_6_1
 import org.unbrokendome.gradle.plugins.xjc.internal.MIN_REQUIRED_GRADLE_VERSION
 import org.unbrokendome.gradle.plugins.xjc.internal.SerializableResolvedArtifact
-import java.io.File
 
 
 class XjcPlugin : Plugin<Project> {
@@ -86,6 +84,24 @@ class XjcPlugin : Plugin<Project> {
                     XjcSourceSetConvention::class.java, sourceSet, xjcExtension.srcDirName
                 )
 
+
+                val xjcSourceSetExtension = sourceSet.extensions.create(XJC_EXTENSION_NAME, XjcSourceSetExtension::class.java, project.objects)
+                val xjcSchema = project.objects.sourceDirectorySet("xjcSchema", "${GUtil.toWords(sourceSet.name)} XJC schema").apply {
+                    include("**/*.xsd")
+                }
+
+                listOf(xjcSchema).forEach { sourceDirSet ->
+                    sourceDirSet.srcDir(project.layout.projectDirectory.dir("src/${sourceSet.name}").dir(xjcExtension.srcDirName))
+
+                }
+                with(sourceSet.allSource) {
+                    source(xjcSchema)
+                }
+
+                xjcSourceSetExtension.xjcSchema.set(xjcSchema)
+
+
+
                 (sourceSet as HasConvention).convention.plugins[XJC_EXTENSION_NAME] = xjcSourceSetConvention
 
                 val xjcClasspathConfiguration = project.createInternalConfiguration(
@@ -110,7 +126,7 @@ class XjcPlugin : Plugin<Project> {
                 val generateTask = project.tasks.register(
                     xjcSourceSetConvention.xjcGenerateTaskName, XjcGenerate::class.java
                 ) { task ->
-                    task.source.setFrom(xjcSourceSetConvention.xjcSchema)
+                    task.source.setFrom(xjcSourceSetExtension.xjcSchema)
                     task.bindingFiles.setFrom(xjcSourceSetConvention.xjcBinding)
                     task.urlSources.setFrom(xjcSourceSetConvention.xjcUrl)
                     task.catalogs.setFrom(xjcSourceSetConvention.xjcCatalog)
@@ -136,11 +152,11 @@ class XjcPlugin : Plugin<Project> {
                 val xjcOutputDir = generateTask.flatMap { it.outputDirectory }
 
                 if (GradleVersion.current() >= GRADLE_VERSION_6_1) {
-                    xjcSourceSetConvention.xjcSchema.destinationDirectory.set(xjcOutputDir)
+                    xjcSchema.destinationDirectory.set(xjcOutputDir)
                     sourceSet.java.srcDir(xjcOutputDir)
                 } else {
-                    xjcSourceSetConvention.xjcSchema.outputDir =
-                        project.file(generateTask.flatMap { it.outputDirectory })
+                    xjcSchema.destinationDirectory.set(
+                        project.file(generateTask.flatMap { it.outputDirectory }))
                     sourceSet.java.srcDir(xjcOutputDir)
                 }
 
