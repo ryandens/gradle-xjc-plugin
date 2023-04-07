@@ -63,6 +63,10 @@ object XjcSourceSetConventionTest : Spek({
             (sourceSet as HasConvention).requiredConvention<XjcSourceSetConvention>()
         }
 
+        val xjcSourceSetExtension by memoized {
+            sourceSet.requiredExtension<XjcSourceSetExtension>()
+        }
+
 
         it("should return the correct task and configuration names") {
             assertThat(xjcSourceSetConvention).all {
@@ -79,10 +83,13 @@ object XjcSourceSetConventionTest : Spek({
 
 
         it("should set default include filters") {
+
+            assertThat(xjcSourceSetExtension).all {
+                prop("xjcSchema") { it.xjcSchema.get() }
+                        .prop("includes") { it.includes }
+                        .containsOnly("**/*.xsd")
+            }
             assertThat(xjcSourceSetConvention).all {
-                prop("xjcSchema") { it.xjcSchema }
-                    .prop("includes") { it.includes }
-                    .containsOnly("**/*.xsd")
                 prop("xjcBinding") { it.xjcBinding }
                     .prop("includes") { it.includes }
                     .containsOnly("**/*.xjb")
@@ -97,10 +104,13 @@ object XjcSourceSetConventionTest : Spek({
             val xjc = project.requiredExtension<XjcExtension>()
             xjc.srcDirName.set("xjc")
 
+            assertThat(xjcSourceSetExtension).all {
+                prop("xjcSchema") { it.xjcSchema.get() }
+                        .prop("srcDirs") { it.srcDirs }
+                        .containsOnly(project.file("src/custom/xjc"))
+            }
+
             assertThat(xjcSourceSetConvention).all {
-                prop("xjcSchema") { it.xjcSchema }
-                    .prop("srcDirs") { it.srcDirs }
-                    .containsOnly(project.file("src/custom/xjc"))
                 prop("xjcBinding") { it.xjcBinding }
                     .prop("srcDirs") { it.srcDirs }
                     .containsOnly(project.file("src/custom/xjc"))
