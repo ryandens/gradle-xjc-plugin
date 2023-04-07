@@ -90,15 +90,22 @@ class XjcPlugin : Plugin<Project> {
                     include("**/*.xsd")
                 }
 
-                listOf(xjcSchema).forEach { sourceDirSet ->
+                val xjcBinding = project.objects.sourceDirectorySet("xjcBinding", "${GUtil.toWords(sourceSet.name)} XJC binding").apply {
+                    include("**/*.xjb")
+                }
+
+                listOf(xjcSchema, xjcBinding).forEach { sourceDirSet ->
                     sourceDirSet.srcDir(project.layout.projectDirectory.dir("src/${sourceSet.name}").dir(xjcExtension.srcDirName))
 
                 }
                 with(sourceSet.allSource) {
                     source(xjcSchema)
+                    source(xjcBinding)
                 }
 
                 xjcSourceSetExtension.xjcSchema.set(xjcSchema)
+                xjcSourceSetExtension.xjcBinding.set(xjcBinding)
+
 
 
 
@@ -127,7 +134,7 @@ class XjcPlugin : Plugin<Project> {
                     xjcSourceSetConvention.xjcGenerateTaskName, XjcGenerate::class.java
                 ) { task ->
                     task.source.setFrom(xjcSourceSetExtension.xjcSchema)
-                    task.bindingFiles.setFrom(xjcSourceSetConvention.xjcBinding)
+                    task.bindingFiles.setFrom(xjcSourceSetExtension.xjcBinding)
                     task.urlSources.setFrom(xjcSourceSetConvention.xjcUrl)
                     task.catalogs.setFrom(xjcSourceSetConvention.xjcCatalog)
 
