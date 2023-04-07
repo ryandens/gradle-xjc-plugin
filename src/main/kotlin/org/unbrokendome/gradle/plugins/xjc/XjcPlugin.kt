@@ -4,12 +4,16 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.util.GradleVersion
 import org.unbrokendome.gradle.plugins.xjc.internal.GRADLE_VERSION_6_1
 import org.unbrokendome.gradle.plugins.xjc.internal.MIN_REQUIRED_GRADLE_VERSION
+import org.unbrokendome.gradle.plugins.xjc.internal.SerializableResolvedArtifact
+import java.io.File
 
 
 class XjcPlugin : Plugin<Project> {
@@ -112,7 +116,9 @@ class XjcPlugin : Plugin<Project> {
                     task.catalogs.setFrom(xjcSourceSetConvention.xjcCatalog)
 
                     task.pluginClasspath.setFrom(xjcClasspathConfiguration)
-                    task.catalogResolutionClasspath.set(catalogResolutionConfiguration)
+
+                    task.catalogSerializableResolvedArtifact.set(project.provider { catalogResolutionConfiguration.resolvedConfiguration.lenientConfiguration.artifacts.map { SerializableResolvedArtifact(it) } })
+
                     task.episodes.setFrom(episodesConfiguration)
 
                     task.targetPackage.set(xjcSourceSetConvention.xjcTargetPackage)

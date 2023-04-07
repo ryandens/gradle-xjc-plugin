@@ -11,6 +11,7 @@ import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.JavaPlugin
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
+import org.unbrokendome.gradle.plugins.xjc.internal.SerializableResolvedArtifact
 import org.unbrokendome.gradle.plugins.xjc.testutil.assertions.containsItem
 import org.unbrokendome.gradle.plugins.xjc.testutil.assertions.dirValue
 import org.unbrokendome.gradle.plugins.xjc.testutil.assertions.hasValueEqualTo
@@ -161,8 +162,8 @@ object XjcGenerateTest : Spek({
             val catalogResolutionConfig = project.configurations.getByName("xjcCatalogResolution")
 
             assertThat(task, name = "task").all {
-                prop(XjcGenerate::catalogResolutionClasspath)
-                    .hasValueEqualTo(catalogResolutionConfig)
+                prop(XjcGenerate::catalogSerializableResolvedArtifact)
+                    .hasValueEqualTo(catalogResolutionConfig.resolvedConfiguration.lenientConfiguration.artifacts.map { SerializableResolvedArtifact(it) })
             }
         }
 

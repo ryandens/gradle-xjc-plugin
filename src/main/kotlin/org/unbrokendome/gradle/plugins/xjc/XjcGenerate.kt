@@ -1,7 +1,6 @@
 package org.unbrokendome.gradle.plugins.xjc
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
@@ -107,12 +106,8 @@ abstract class XjcGenerate
     abstract val pluginClasspath: ConfigurableFileCollection
 
 
-    /**
-     * A [Configuration] to be used for catalog resolution with the `maven:` URI scheme.
-     */
-    @get:[InputFiles Optional Classpath]
-    abstract val catalogResolutionClasspath: Property<Configuration>
-
+    @get:[Input Optional]
+    abstract val catalogSerializableResolvedArtifact: ListProperty<SerializableResolvedArtifact>
 
     /**
      * Additional arguments to be passed to XJC for this source set.
@@ -235,12 +230,7 @@ abstract class XjcGenerate
         parameters.bindingFiles.setFrom(bindingFiles)
         parameters.pluginClasspath.setFrom(pluginClasspath)
         parameters.catalogFiles.setFrom(catalogs)
-        parameters.catalogResolvedArtifacts.set(
-            catalogResolutionClasspath.map { configuration ->
-                configuration.resolvedConfiguration.lenientConfiguration.artifacts
-                    .map { SerializableResolvedArtifact(it) }
-            }
-        )
+        parameters.catalogResolvedArtifacts.set(catalogSerializableResolvedArtifact)
         parameters.episodes.setFrom(episodes)
         parameters.targetPackage.set(targetPackage)
         parameters.encoding.set(encoding)
